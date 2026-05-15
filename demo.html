@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>全能工具箱 · 编码转换 / 文本处理 / Base64</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #0f172a;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* 页眉 */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b, #3b82f6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .header p {
+            color: #475569;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* 卡片网格 */
+        .tools-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: box-shadow 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .card:hover {
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.75rem;
+            background: #fafcff;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .card-header i {
+            font-size: 1.6rem;
+        }
+        .card-header h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .card-header .badge {
+            background: #e2e8f0;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            color: #334155;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.75rem;
+        }
+
+        /* 表单元素 */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 1rem;
+            background: #ffffff;
+            transition: all 0.2s;
+            resize: vertical;
+        }
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        select {
+            padding: 0.6rem 2rem 0.6rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1rem 0 1rem 0;
+        }
+        .btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1e293b;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            border: 1px solid #cbd5e1;
+            background: white;
+        }
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+        .btn-copy {
+            background: #10b981;
+            color: white;
+        }
+        .btn-copy:hover {
+            background: #059669;
+        }
+        hr {
+            margin: 1.2rem 0;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+        }
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .info-note {
+            font-size: 0.75rem;
+            color: #5b6e8c;
+            margin-top: 0.5rem;
+            background: #f8fafc;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1rem;
+            display: inline-block;
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #62748c;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 2rem;
+        }
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            .card-body {
+                padding: 1.25rem;
+            }
+            .button-group {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔧 开发者·本地工具箱</h1>
+        <p>编码解码 · 文本净化 · 哈希Base64 | 纯前端，数据永不离开浏览器</p>
+    </div>
+
+    <div class="tools-grid">
+        <!-- 工具1：字符编码/解码 (UTF-8, UTF-16LE, UTF-16BE) -->
+        <div class="card">
+            <div class="card-header">
+                <span>🔤</span>
+                <h2>字符编码转换器 <span class="badge">多方案</span></h2>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <label>📝 原始文本 (Unicode)</label>
+                    <textarea id="text-input-encoding" rows="3" placeholder="例如：Hello 世界 🌍 你好"></textarea>
+                </div>
+
+                <div class="flex-row">
+                    <div>
+                        <label>🔧 编码方案</label>
+                        <select id="encode-scheme">
+                            <option value="UTF-8">UTF-8</option>
+                            <option value="UTF-16LE">UTF-16LE (小端)</option>
+                            <option value="UTF-16BE">UTF-16BE (大端)</option>
+                        </select>
+                    </div>
+                    <div class="button-group" style="margin-top: 1.2rem;">
+                        <button id="btn-encode" class="btn btn-primary">🔐 编码 → Hex</button>
+                        <button id="btn-copy-encoded" class="btn btn-outline">📋 复制Hex结果</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>⚙️ 十六进制字节串 (Hex)</label>
+                    <textarea id="hex-output" rows="2" placeholder="编码结果将显示在这里" readonly></textarea>
+                </div>
+
+                <hr>
+
+                <div class="input-group">
+                    <label>🔁 反向解码 (Hex → 文本)</label>
+                    <textarea id="hex-input" rows="2" placeholder="粘贴十六进制，例如：48656c6c6f"></textarea>
+                    <div class="flex-row" style="margin-top: 0.5rem;">
+                        <div>
+                            <label>解码方案</label>
+                            <select id="decode-scheme">
+                                <option value="UTF-8">UTF-8</option>
+                                <option value="UTF-16LE">UTF-16LE</option>
+                                <option value="UTF-16BE">UTF-16BE</option>
+                            </select>
+                        </div>
+                        <button id="btn-decode" class="btn btn-primary">🔓 解码 → 文本</button>
+                        <button id="btn-copy-decoded" class="btn btn-outline">📋 复制文本</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>📄 解码后的文本</label>
+                    <textarea id="decoded-text" rows="2" placeholder="解码结果" readonly></textarea>
+                </div>
+                <div class="info-note">
+                    💡 支持UTF-8 / UTF-16小端/大端。编码将文本转为十六进制表示；解码时请确保Hex格式正确（连续，无空格）。
+                </div>
+            </div>
+        </div>
+
+        <!-- 工具2：字符串空白去除 (多种净化模式) -->
+        <div class="card">
+            <div class="card-header">
+                <span>✂️</span>
+                <h2>字符串 · 空白净化器</h2>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <label>📌 原始文本 (包含空格、换行等)</label>
+                    <textarea id="trim-input" rows="4" placeholder="   Hello   世界   ！  前后有空格   中间 多空格  "></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button id="trim-both" class="btn btn-primary">🎯 去除首尾空格</button>
+                    <button id="trim-all" class="btn btn-outline">🌀 移除所有空白字符(空格/换行/制表)</button>
+                    <button id="trim-extra" class="btn btn-outline">✨ 规范化空格(合并多个空格/换行为一个空格)</button>
+                    <button id="copy-trim-result" class="btn btn-copy">📋 复制结果</button>
+                </div>
+
+                <div class="input-group">
+                    <label>✨ 净化后结果</label>
+                    <textarea id="trim-result" rows="3" readonly placeholder="处理后的文本"></textarea>
+                </div>
+                <div class="info-note">
+                    ✔️ 去除首尾空格：清除前后的空格/Tab/换行<br>
+                    ✔️ 移除所有空白：删除所有空格、换行符、制表符等<br>
+                    ✔️ 规范化空格：将连续空白(含换行)压缩成一个空格并trim首尾
+                </div>
+            </div>
+        </div>
+
+        <!-- 工具3：Base64 编解码 (额外贴心功能) -->
+        <div class="card">
+            <div class="card-header">
+                <span>🔣</span>
+                <h2>Base64 安全编解码</h2>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <label>📥 原始文本</label>
+                    <textarea id="b64-plain" rows="2" placeholder="要编码的内容，支持中文"></textarea>
+                    <div class="button-group">
+                        <button id="b64-encode" class="btn btn-primary">➡️ 编码为 Base64</button>
+                        <button id="copy-b64-encoded" class="btn btn-outline">📋 复制Base64</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>🔑 Base64 字符串</label>
+                    <textarea id="b64-cipher" rows="2" placeholder="粘贴Base64字符串"></textarea>
+                    <div class="button-group">
+                        <button id="b64-decode" class="btn btn-primary">⬅️ 解码为文本</button>
+                        <button id="copy-b64-decoded" class="btn btn-outline">📋 复制原文</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>📋 实时结果预览</label>
+                    <textarea id="b64-result" rows="2" readonly placeholder="结果将显示在此..."></textarea>
+                </div>
+                <div class="info-note">
+                    📎 Base64 编码使用 UTF-8 字符集，支持emoji和所有Unicode。
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        ⚡ 完全本地运行 · 隐私安全 · 灵感源自 toolhelper | 字符编码支持UTF-8/16系列 & 智能空白处理
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // ---------- 1. 字符编码 / 解码核心逻辑 ----------
+        // UTF-8 编码 (使用原生TextEncoder)
+        function utf8EncodeToHex(str) {
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(str);
+            return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        // UTF-8 解码
+        function utf8DecodeFromHex(hexStr) {
+            if (!hexStr) return '';
+            const hexClean = hexStr.replace(/\s/g, '');
+            if (hexClean.length % 2 !== 0) throw new Error('Hex长度必须为偶数');
+            const bytes = new Uint8Array(hexClean.match(/.{2}/g).map(byte => parseInt(byte, 16)));
+            const decoder = new TextDecoder('utf-8');
+            return decoder.decode(bytes);
+        }
+
+        // ----- UTF-16LE / UTF-16BE 手动实现 (支持代理对, 完美处理emoji) -----
+        // 将JavaScript字符串转为UTF-16字节数组 (littleEndian标志)
+        function stringToUtf16Bytes(str, littleEndian) {
+            const buf = [];
+            for (let i = 0; i < str.length; i++) {
+                let code = str.charCodeAt(i);
+                // 处理高位代理 (如果存在, 需组合)
+                if (code >= 0xD800 && code <= 0xDBFF && i + 1 < str.length) {
+                    const next = str.charCodeAt(i + 1);
+                    if (next >= 0xDC00 && next <= 0xDFFF) {
+                        const high = code;
+                        const low = next;
+                        const surrogatePair = ((high - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+                        const utf16High = (surrogatePair >> 16) & 0xFFFF;
+                        const utf16Low = surrogatePair & 0xFFFF;
+                        // 对于UTF16, 实际存储两个码元
+                        if (littleEndian) {
+                            buf.push(utf16High & 0xFF, (utf16High >> 8) & 0xFF);
+                            buf.push(utf16Low & 0xFF, (utf16Low >> 8) & 0xFF);
+                        } else {
+                            buf.push((utf16High >> 8) & 0xFF, utf16High & 0xFF);
+                            buf.push((utf16Low >> 8) & 0xFF, utf16Low & 0xFF);
+                        }
+                        i++; // 跳过下一个字符
+                        continue;
+                    }
+                }
+                // 普通BMP字符
+                if (littleEndian) {
+                    buf.push(code & 0xFF, (code >> 8) & 0xFF);
+                } else {
+                    buf.push((code >> 8) & 0xFF, code & 0xFF);
+                }
+            }
+            return buf;
+        }
+
+        // 将UTF-16字节数组转回字符串
+        function utf16BytesToString(bytes, littleEndian) {
+            if (bytes.length % 2 !== 0) throw new Error('UTF-16字节长度必须偶数');
+            const codes = [];
+            for (let i = 0; i < bytes.length; i += 2) {
+                let low, high;
+                if (littleEndian) {
+                    low = bytes[i];
+                    high = bytes[i+1];
+                } else {
+                    low = bytes[i+1];
+                    high = bytes[i];
+                }
+                let code = (high << 8) | low;
+                codes.push(code);
+            }
+            // 处理代理对
+            let result = '';
+            for (let i = 0; i < codes.length; i++) {
+                let code = codes[i];
+                if (code >= 0xD800 && code <= 0xDBFF && i+1 < codes.length && codes[i+1] >= 0xDC00 && codes[i+1] <= 0xDFFF) {
+                    const highSurrogate = code;
+                    const lowSurrogate = codes[i+1];
+                    const fullCode = ((highSurrogate - 0xD800) * 0x400) + (lowSurrogate - 0xDC00) + 0x10000;
+                    result += String.fromCodePoint(fullCode);
+                    i++;
+                } else {
+                    result += String.fromCharCode(code);
+                }
+            }
+            return result;
+        }
+
+        function utf16EncodeToHex(str, scheme) {
+            const littleEndian = (scheme === 'UTF-16LE');
+            const bytes = stringToUtf16Bytes(str, littleEndian);
+            return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function utf16DecodeFromHex(hexStr, scheme) {
+            const hexClean = hexStr.replace(/\s/g, '');
+            if (hexClean.length % 2 !== 0) throw new Error('Hex长度必须偶数');
+            const bytes = hexClean.match(/.{2}/g).map(b => parseInt(b, 16));
+            const littleEndian = (scheme === 'UTF-16LE');
+            return utf16BytesToString(bytes, littleEndian);
+        }
+
+        // 通用编码入口
+        function encodeTextByScheme(text, scheme) {
+            if (!text) return '';
+            if (scheme === 'UTF-8') {
+                return utf8EncodeToHex(text);
+            } else if (scheme === 'UTF-16LE' || scheme === 'UTF-16BE') {
+                return utf16EncodeToHex(text, scheme);
+            }
+            throw new Error('不支持的编码方案');
+        }
+
+        function decodeHexByScheme(hex, scheme) {
+            if (!hex) return '';
+            if (scheme === 'UTF-8') {
+                return utf8DecodeFromHex(hex);
+            } else if (scheme === 'UTF-16LE' || scheme === 'UTF-16BE') {
+                return utf16DecodeFromHex(hex, scheme);
+            }
+            throw new Error('不支持的解码方案');
+        }
+
+        // ----- UI 绑定 -----
+        const textInput = document.getElementById('text-input-encoding');
+        const encodeScheme = document.getElementById('encode-scheme');
+        const hexOutput = document.getElementById('hex-output');
+        const btnEncode = document.getElementById('btn-encode');
+        const btnCopyEncoded = document.getElementById('btn-copy-encoded');
+        const hexInput = document.getElementById('hex-input');
+        const decodeScheme = document.getElementById('decode-scheme');
+        const btnDecode = document.getElementById('btn-decode');
+        const decodedText = document.getElementById('decoded-text');
+        const btnCopyDecoded = document.getElementById('btn-copy-decoded');
+
+        // 编码动作
+        btnEncode.addEventListener('click', () => {
+            const raw = textInput.value;
+            if (!raw.trim() && raw.length === 0) {
+                hexOutput.value = '';
+                return;
+            }
+            try {
+                const scheme = encodeScheme.value;
+                const hexResult = encodeTextByScheme(raw, scheme);
+                hexOutput.value = hexResult;
+            } catch (err) {
+                hexOutput.value = `编码错误: ${err.message}`;
+            }
+        });
+
+        // 解码动作
+        btnDecode.addEventListener('click', () => {
+            const hexVal = hexInput.value.trim();
+            if (!hexVal) {
+                decodedText.value = '';
+                return;
+            }
+            try {
+                const scheme = decodeScheme.value;
+                const result = decodeHexByScheme(hexVal, scheme);
+                decodedText.value = result;
+            } catch (err) {
+                decodedText.value = `解码失败: ${err.message}`;
+            }
+        });
+
+        // 辅助复制
+        btnCopyEncoded.addEventListener('click', () => {
+            copyToClipboard(hexOutput.value, '编码结果已复制');
+        });
+        btnCopyDecoded.addEventListener('click', () => {
+            copyToClipboard(decodedText.value, '解码文本已复制');
+        });
+
+        // ---------- 2. 字符串空白去除工具 ----------
+        const trimInput = document.getElementById('trim-input');
+        const trimResult = document.getElementById('trim-result');
+        const trimBothBtn = document.getElementById('trim-both');
+        const trimAllBtn = document.getElementById('trim-all');
+        const trimExtraBtn = document.getElementById('trim-extra');
+        const copyTrimBtn = document.getElementById('copy-trim-result');
+
+        function updateTrimResult(value) {
+            trimResult.value = value;
+        }
+
+        trimBothBtn.addEventListener('click', () => {
+            const val = trimInput.value;
+            const trimmed = val.trim();
+            updateTrimResult(trimmed);
+        });
+
+        trimAllBtn.addEventListener('click', () => {
+            const val = trimInput.value;
+            // 移除所有空白字符：空格、换行、制表、回车等
+            const noWhitespace = val.replace(/\s+/g, '');
+            updateTrimResult(noWhitespace);
+        });
+
+        trimExtraBtn.addEventListener('click', () => {
+            const val = trimInput.value;
+            // 将所有连续空白（包括换行，制表）替换为一个空格，并trim首尾
+            const normalized = val.trim().replace(/\s+/g, ' ');
+            updateTrimResult(normalized);
+        });
+
+        copyTrimBtn.addEventListener('click', () => {
+            copyToClipboard(trimResult.value, '净化结果已复制');
+        });
+
+        // ---------- 3. Base64 编解码工具 ----------
+        const b64Plain = document.getElementById('b64-plain');
+        const b64Cipher = document.getElementById('b64-cipher');
+        const b64Result = document.getElementById('b64-result');
+        const b64EncodeBtn = document.getElementById('b64-encode');
+        const b64DecodeBtn = document.getElementById('b64-decode');
+        const copyB64Encoded = document.getElementById('copy-b64-encoded');
+        const copyB64Decoded = document.getElementById('copy-b64-decoded');
+
+        function base64Encode(str) {
+            try {
+                // 处理 Unicode: 使用 TextEncoder 转 UTF-8 再进行 base64
+                const encoder = new TextEncoder();
+                const bytes = encoder.encode(str);
+                let binary = '';
+                bytes.forEach(byte => binary += String.fromCharCode(byte));
+                return btoa(binary);
+            } catch (e) {
+                throw new Error('编码失败，可能包含无法处理的字符');
+            }
+        }
+
+        function base64Decode(base64Str) {
+            try {
+                const binary = atob(base64Str);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                const decoder = new TextDecoder('utf-8');
+                return decoder.decode(bytes);
+            } catch (e) {
+                throw new Error('无效的Base64字符串');
+            }
+        }
+
+        b64EncodeBtn.addEventListener('click', () => {
+            const plain = b64Plain.value;
+            if (!plain) {
+                b64Result.value = '';
+                return;
+            }
+            try {
+                const encoded = base64Encode(plain);
+                b64Result.value = encoded;
+                b64Cipher.value = encoded;   // 同步到解码输入区，方便测试
+            } catch (err) {
+                b64Result.value = `错误: ${err.message}`;
+            }
+        });
+
+        b64DecodeBtn.addEventListener('click', () => {
+            const cipher = b64Cipher.value.trim();
+            if (!cipher) {
+                b64Result.value = '';
+                return;
+            }
+            try {
+                const decoded = base64Decode(cipher);
+                b64Result.value = decoded;
+                b64Plain.value = decoded;    // 可选同步
+            } catch (err) {
+                b64Result.value = `解码失败: ${err.message}`;
+            }
+        });
+
+        copyB64Encoded.addEventListener('click', () => {
+            copyToClipboard(b64Result.value, 'Base64结果已复制');
+        });
+        copyB64Decoded.addEventListener('click', () => {
+            copyToClipboard(b64Result.value, '解码结果已复制');
+        });
+
+        // 通用复制函数 + 轻提示 (无需 alert 干扰)
+        function copyToClipboard(text, successMsg = '已复制到剪贴板') {
+            if (!text && text !== '') {
+                showToast('没有内容可复制', 1500);
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`✓ ${successMsg}`, 1200);
+            }).catch(() => {
+                showToast('复制失败，可手动复制', 1500);
+            });
+        }
+
+        // 简单toast提示
+        function showToast(msg, duration = 1500) {
+            let toast = document.querySelector('.global-toast');
+            if (!toast) {
+                const div = document.createElement('div');
+                div.className = 'global-toast';
+                div.style.cssText = `
+                    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                    background: #1e293b; color: white; padding: 8px 18px; border-radius: 40px;
+                    font-size: 0.85rem; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    pointer-events: none; font-weight: 500; backdrop-filter: blur(6px);
+                    transition: opacity 0.2s; opacity: 0;
+                `;
+                document.body.appendChild(div);
+                toast = div;
+            }
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, duration);
+        }
+
+        // 初始化示例数据，方便展示
+        const demoText = "Hello 世界 🌟 ABC 123";
+        textInput.value = demoText;
+        // 默认展示一次编码结果
+        setTimeout(() => {
+            try {
+                const initHex = encodeTextByScheme(demoText, 'UTF-8');
+                hexOutput.value = initHex;
+                hexInput.value = initHex;
+                decodedText.value = demoText;
+            } catch(e) {}
+            trimInput.value = "   多个  空格  和  换行  \n  测试   \n  字符串   ";
+            trimBothBtn.click(); // 自动展示trim示例结果
+        }, 50);
+    })();
+</script>
+</body>
+</html>

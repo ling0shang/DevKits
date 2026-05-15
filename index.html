@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>开发者工具箱 · 编码/净化/Base64</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome 6 (免费图标库) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-tools"></i> DevToolKits
+            </div>
+            <nav class="tool-nav">
+                <ul>
+                    <li data-tool="encoding" class="active">
+                        <i class="fas fa-exchange-alt"></i> 字符编码转换
+                    </li>
+                    <li data-tool="trim">
+                        <i class="fas fa-eraser"></i> 空白净化器
+                    </li>
+                    <li data-tool="base64">
+                        <i class="fas fa-lock"></i> Base64 编解码
+                    </li>
+                    <li data-tool="Button">
+                        <i class="fas fa-lock"></i> Button
+                    </li>
+                </ul>
+            </nav>
+            <div class="footer-note">
+                <i class="fas fa-shield-alt"></i> 本地处理 · 隐私安全
+            </div>
+        </aside>
+
+        <!-- 右侧内容区，动态渲染工具 -->
+        <main class="content-area" id="dynamic-content">
+            <div class="loading-placeholder">
+                <i class="fas fa-spinner fa-pulse"></i> 加载工具...
+            </div>
+        </main>
+    </div>
+
+    <!-- 全局 JS 模块 -->
+    <script src="js/core.js"></script>
+    <script src="js/main.js"></script>
+    <!-- 工具模块将在需要时动态加载，无需全部引入 -->
+    <!-- 替换掉你原来的 iconv-lite 引入 -->
+    <!-- iconv-lite 浏览器可用 UMD 版（官方打包好的） -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/iconv-lite@0.7.2/lib/index.min.js"></script> -->
+    <script src="./lib/pk-iconv-lite.js"></script>
+    
+    <!-- 按钮测试 -->
+<script>
+  
+
+// Convert from an encoded buffer to a js string. 
+
+let str;
+let buf;
+// console.log(iconv);
+// 先测试 decode 是否可用
+// var testBuf = new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0x6f]);
+// iconv.decode(testBuf, 'win1251');
+str = iconv.decode(Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]), 'win1251');
+console.log(typeof Buffer);
+
+// Convert from a js string to an encoded buffer.
+// buf = iconv.encode("Sample input string", 'win1251');
+
+// Check if encoding is supported
+// iconv.encodingExists("us-ascii")
+
+</script>
+
+</body>
+</html>
