@@ -26,6 +26,12 @@ async function loadTool(toolId) {
         li.classList.remove('active');
         if (li.dataset.tool === toolId) li.classList.add('active');
     });
+    // 高亮子菜单项
+    document.querySelectorAll('.submenu li').forEach(li => {
+        li.classList.remove('active');
+        if (li.dataset.tool === toolId) li.classList.add('active');
+    });
+
 
     // 显示加载中
     contentEl.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> 加载 ${toolId} 工具...</div>`;
@@ -50,6 +56,39 @@ async function loadTool(toolId) {
         ToolHelper.showToast('工具加载失败', 2000);
     }
 }
+// 处理一级菜单折叠/展开
+function toggleParentMenu(parentLi) {
+    parentLi.classList.toggle('open');
+}
+
+// 事件委托绑定（避免刷新后失效）
+document.querySelector('.tool-nav').addEventListener('click', (e) => {
+    // 处理子菜单项点击（工具切换）
+    const submenuItem = e.target.closest('.submenu li');
+    if (submenuItem && submenuItem.dataset.tool) {
+        const toolId = submenuItem.dataset.tool;
+        loadTool(toolId);
+        e.stopPropagation();
+        return;
+    }
+
+    // 处理一级菜单折叠/展开
+    const menuItemDiv = e.target.closest('.menu-item');
+    if (menuItemDiv) {
+        const parentLi = menuItemDiv.closest('.menu-parent');
+        if (parentLi) {
+            toggleParentMenu(parentLi);
+            e.stopPropagation();
+        }
+    }
+});
+
+// 初始化：默认展开第一个分组，并加载默认工具（如 encoding）
+document.addEventListener('DOMContentLoaded', () => {
+    const firstParent = document.querySelector('.menu-parent');
+    if (firstParent) firstParent.classList.add('open');
+    loadTool('encoding'); // 默认加载字符编码转换
+});
 
 // 监听菜单点击
 document.querySelectorAll('.tool-nav li').forEach(li => {
