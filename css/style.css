@@ -275,29 +275,48 @@ hr {
 }
 
 /*--------------------------- 新增二级菜单的样式 Start---------------------------- */
-/* 一级菜单项 */
-.menu-parent {
-    list-style: none;
+/* 一级菜单项特殊处理 */
+
+/* 带二级菜单的父级 li 特殊处理 */
+.tool-nav > ul > li.menu-parent {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    margin: 0.2rem 0.8rem; 
 }
+
 .menu-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.7rem 1.8rem;
-    margin: 0.2rem 0.8rem;
+    margin: 0;
     border-radius: 0.8rem;
     cursor: pointer;
     font-weight: 500;
     color: #334155;
-    transition: all 0.2s;
+    transition: all 0.2s ;
+    gap: 0.75rem; /* 给图标和文字之间加固定间距，避免挤压 */
 }
+
 .menu-item:hover {
     background: #f1f5f9;
 }
+
 .menu-item .arrow {
     font-size: 0.75rem;
     transition: transform 0.2s;
+    flex-shrink: 0; /* 箭头不允许被压缩 */
 }
+
+/* 父菜单标题会自动换行：给文字span设置强制不换行 */
+.menu-item span {
+    white-space: nowrap; /* 禁止文字换行 */
+    flex: 1; /* 让文字自动占据中间剩余空间 */
+    overflow: hidden; /* 超出部分隐藏（可选） */
+    text-overflow: ellipsis; /* 超出部分显示省略号（可选） */
+}
+
 .menu-parent.open .arrow {
     transform: rotate(180deg);
 }
@@ -306,7 +325,7 @@ hr {
 .submenu {
     list-style: none;
     padding-left: 2rem;
-    margin: 0.2rem 0;
+    margin: 0;
     display: none;
 }
 .menu-parent.open .submenu {
@@ -314,7 +333,7 @@ hr {
 }
 .submenu li {
     padding: 0.5rem 1rem 0.5rem 2.2rem;
-    margin: 0.2rem 0;
+    margin: 0.3rem 0;
     border-radius: 0.6rem;
     cursor: pointer;
     font-size: 0.9rem;

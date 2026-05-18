@@ -131,9 +131,10 @@ window.renderEncodingTool = function(container) {
                             <!-- 未来可按需增加，如 'GB2312', 'ISO-8859-1' 等 -->
                         </select>
                     </div>
-                    <div class="button-group"><button id="do-encode" class="btn btn-primary">🔐 编码 → Hex</button><button id="copy-hex" class="btn btn-outline">📋 复制Hex</button></div>
+                    <button id="do-encode" class="btn btn-primary">🔐 编码 → Hex</button><button id="copy-hex" class="btn btn-outline">📋 复制Hex</button>
                 </div>
-                <div class="input-group"><label>🔢 Hex 结果</label><textarea id="enc-result" rows="2" readonly></textarea></div>
+                <!-- 已添加灰色不可修改样式 -->
+                <div class="input-group"><label>🔢 Hex 结果</label><textarea id="enc-result" rows="2" readonly style="background:#e9ecef; color:#495057; cursor:not-allowed; opacity:0.9; border:1px solid #ced4da;"></textarea></div>
                 <hr>
                 <div class="input-group"><label>🔁 Hex 解码</label><textarea id="dec-hex" rows="2" placeholder="粘贴十六进制"></textarea>
                     <div class="flex-row">
@@ -150,7 +151,8 @@ window.renderEncodingTool = function(container) {
                         <button id="do-decode" class="btn btn-primary">🔓 解码 → 文本</button><button id="copy-text" class="btn btn-outline">📋 复制文本</button>
                     </div>
                 </div>
-                <div class="input-group"><label>📄 解码结果</label><textarea id="dec-result" rows="2" readonly></textarea></div>
+                <!-- 已添加灰色不可修改样式 -->
+                <div class="input-group"><label>📄 解码结果</label><textarea id="dec-result" rows="2" readonly style="background:#e9ecef; color:#495057; cursor:not-allowed; opacity:0.9; border:1px solid #ced4da;"></textarea></div>
                 <div class="info-note">💡 支持 UTF-8 / UTF-16LE / UTF-16BE，编解码均在本地完成。</div>
             </div>
         </div>
